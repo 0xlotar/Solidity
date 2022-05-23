@@ -15,8 +15,11 @@ export default function Create() {
   const [filter, setFilter] = useState('')
   const [mining, setMining] = useState(false)
 
+  const keyboardsContract = getKeyboardsContract(ethereum);
 
-  const contractAddress = '0xB8840B2D4C460Ed47B045cc716EC02fC3481Fd8a';
+
+
+  const contractAddress = '0xBcC56fb81e2A97Dd5789c7Fa4FD5bCb2cAD6783d';
   const contractABI = abi.abi;
 
   const handleAccounts = (accounts) => {
@@ -54,13 +57,14 @@ export default function Create() {
   const submitCreate = async (e) => {
     e.preventDefault();
 
-    if (!ethereum) {
-      console.error('Ethereum object is required to create a keyboard');
+    if (!keyboardsContract) {
+      console.error('KeyboardsContract object is required to create a keyboard');
       return;
     }
 
     setMining(true);
     try {
+      // everything else is the same!
       const provider = new ethers.providers.Web3Provider(ethereum);
       const signer = provider.getSigner();
       const keyboardsContract = new ethers.Contract(contractAddress, contractABI, signer);

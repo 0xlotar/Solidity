@@ -9,12 +9,24 @@ contract Keyboards {
 	  Iso105 
 	}
   struct Keyboard {
-  KeyboardKind kind; 
-  // ABS = false, PBT = true
-  bool isPBT;
-  // tailwind filters to layer over
-  string filter;
-}
+    KeyboardKind kind; 
+    // ABS = false, PBT = true
+    bool isPBT;
+    // tailwind filters to layer over
+    string filter;
+    // user who created it! 
+    address owner;
+  }
+  event KeyboardCreated(
+  Keyboard keyboard
+);
+  event TipSent(
+  address recipient,
+  uint256 amount
+);
+
+
+
 
   Keyboard[] public createdKeyboards;
 
@@ -29,9 +41,18 @@ contract Keyboards {
       Keyboard memory newKeyboard  =  Keyboard({
         kind: _kind,
         isPBT: _isPBT,
-        filter: _filter
+        filter: _filter,
+        owner: msg.sender
       });
       createdKeyboards.push(newKeyboard);
+      emit KeyboardCreated(newKeyboard);
     }
+  function tip(uint256 _index) external payable  {
+  address payable owner = payable(createdKeyboards[_index].owner);
+  owner.transfer(msg.value);
+  emit TipSent(owner, msg.value);
+}
+
+
 
 }
