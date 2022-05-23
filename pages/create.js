@@ -13,6 +13,8 @@ export default function Create() {
   const [keyboardKind, setKeyboardKind] = useState(0)
   const [isPBT, setIsPBT] = useState(false)
   const [filter, setFilter] = useState('')
+  const [mining, setMining] = useState(false)
+
 
   const contractAddress = '0xB8840B2D4C460Ed47B045cc716EC02fC3481Fd8a';
   const contractABI = abi.abi;
@@ -57,17 +59,22 @@ export default function Create() {
       return;
     }
 
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    const signer = provider.getSigner();
-    const keyboardsContract = new ethers.Contract(contractAddress, contractABI, signer);
-
-    const createTxn = await keyboardsContract.create(keyboardKind, isPBT, filter)
-    console.log('Create transaction started...', createTxn.hash)
-
-    await createTxn.wait();
-    console.log('Created keyboard!', createTxn.hash);
-
-    Router.push('/');
+    setMining(true);
+    try {
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      const signer = provider.getSigner();
+      const keyboardsContract = new ethers.Contract(contractAddress, contractABI, signer);
+  
+      const createTxn = await keyboardsContract.create(keyboardKind, isPBT, filter)
+      console.log('Create transaction started...', createTxn.hash)
+  
+      await createTxn.wait();
+      console.log('Created keyboard!', createTxn.hash);
+  
+      Router.push('/');
+    } finally {
+      setMining(false);
+    }
   }
 
   if (!ethereum) {
@@ -135,10 +142,15 @@ export default function Create() {
           </select>
         </div>
 
-        <PrimaryButton type="submit" onClick={submitCreate}>
-          Create Keyboard!
-        </PrimaryButton>
+        <PrimaryButton type="submit" disabled={mining} onClick={submitCreate}>
+  {mining ? "Creating..." : "Create Keyboard"}
+</PrimaryButton>
       </form>
+      <div>
+    <h2 className="block text-lg font-medium text-gray-700">Preview</h2>
+    <Keyboard kind={keyboardKind} isPBT={isPBT} filter={filter} />
+  </div>
+
     </div>
   )
 }
