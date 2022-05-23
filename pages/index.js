@@ -20,7 +20,7 @@ export default function Home() {
 
 
   const keyboardsContract = getKeyboardsContract(ethereum);
-  const contractAddress = '0xBcC56fb81e2A97Dd5789c7Fa4FD5bCb2cAD6783d';
+  const contractAddress = '0x69227391A92fE40e55A23e8F7B1C721512C7A344';
   const contractABI = abi.abi;
 
   const addContractEventHandlers = () => {
