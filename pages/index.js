@@ -1,4 +1,3 @@
-const { ethereum, connectedAccount, connectAccount } = useMetaMaskAccount();
 import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast"
 import PrimaryButton from "../components/primary-button";
@@ -8,12 +7,15 @@ import Keyboard from "../components/keyboard";
 import { ethers } from "ethers";
 import { UserCircleIcon } from "@heroicons/react/solid"
 import getKeyboardsContract from "../utils/getKeyboardsContract"
+import { useMetaMaskAccount } from '../components/meta-mask-account-provider'
+import TipButton from "../components/tip-button";
 
 
 
 export default function Home() {
-  const [ethereum, setEthereum] = useState(undefined);
-  const [connectedAccount, setConnectedAccount] = useState(undefined);
+  const { ethereum, connectedAccount, connectAccount } = useMetaMaskAccount();
+  const [ setEthereum] = useState(undefined);
+  const [ setConnectedAccount] = useState(undefined);
   const [keyboards, setKeyboards] = useState([])
   const [newKeyboard, setNewKeyboard] = useState("") // this is new!
   const [keyboardsLoading, setKeyboardsLoading] = useState(false);
@@ -43,37 +45,7 @@ export default function Home() {
   useEffect(addContractEventHandlers, [!!keyboardsContract, connectedAccount]);
 
 
-  const handleAccounts = (accounts) => {
-    if (accounts.length > 0) {
-      const account = accounts[0];
-      console.log('We have an authorized account: ', account);
-      setConnectedAccount(account);
-    } else {
-      console.log("No authorized accounts yet")
-    }
-  };
-  
-  const getConnectedAccount = async () => {
-    if (window.ethereum) {
-      setEthereum(window.ethereum);
-    }
-  
-    if (ethereum) {
-      const accounts = await ethereum.request({ method: 'eth_accounts' });
-      handleAccounts(accounts);
-    }
-  };
-  useEffect(() => getConnectedAccount(), []);
-  
-  const connectAccount = async () => {
-    if (!ethereum) {
-      alert('MetaMask is required to connect an account');
-      return;
-    }
-  
-    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-    handleAccounts(accounts);
-  };
+ 
   
   
   const getKeyboards = async () => {

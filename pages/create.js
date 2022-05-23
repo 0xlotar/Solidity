@@ -1,14 +1,18 @@
 import { ethers } from "ethers";
 import Router from "next/router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import PrimaryButton from "../components/primary-button";
 import Keyboard from "../components/keyboard";
 import abi from "../utils/Keyboards.json"
+import getKeyboardsContract from "../utils/getKeyboardsContract"
+import { useMetaMaskAccount } from '../components/meta-mask-account-provider'
 
 export default function Create() {
+const { ethereum, connectedAccount, connectAccount } = useMetaMaskAccount();
 
-  const [ethereum, setEthereum] = useState(undefined);
-  const [connectedAccount, setConnectedAccount] = useState(undefined);
+
+  const [ setEthereum] = useState(undefined);
+  const [ setConnectedAccount] = useState(undefined);
 
   const [keyboardKind, setKeyboardKind] = useState(0)
   const [isPBT, setIsPBT] = useState(false)
@@ -19,40 +23,10 @@ export default function Create() {
 
 
 
-  const contractAddress = '0x69227391A92fE40e55A23e8F7B1C721512C7A344';
+  const contractAddress = '0xBcC56fb81e2A97Dd5789c7Fa4FD5bCb2cAD6783d';
   const contractABI = abi.abi;
 
-  const handleAccounts = (accounts) => {
-    if (accounts.length > 0) {
-      const account = accounts[0];
-      console.log('We have an authorized account: ', account);
-      setConnectedAccount(account);
-    } else {
-      console.log("No authorized accounts yet")
-    }
-  };
-
-  const getConnectedAccount = async () => {
-    if (window.ethereum) {
-      setEthereum(window.ethereum);
-    }
-
-    if (ethereum) {
-      const accounts = await ethereum.request({ method: 'eth_accounts' });
-      handleAccounts(accounts);
-    }
-  };
-  useEffect(() => getConnectedAccount(), []);
-
-  const connectAccount = async () => {
-    if (!ethereum) {
-      alert('MetaMask is required to connect an account');
-      return;
-    }
-
-    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-    handleAccounts(accounts);
-  };
+  
 
   const submitCreate = async (e) => {
     e.preventDefault();
